@@ -1,0 +1,648 @@
+/* ── Reset & Base ────────────────────────────────────── */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Helvetica Neue', sans-serif;
+  background: #f2f2f7;
+  color: #000;
+  line-height: 1.47;
+  -webkit-font-smoothing: antialiased;
+  overscroll-behavior: none;
+}
+
+input, button, select, textarea {
+  font: inherit;
+  color: inherit;
+}
+
+/* ── App Shell ───────────────────────────────────────── */
+
+.app {
+  max-width: 428px;
+  margin: 0 auto;
+  min-height: 100dvh;
+  background: #f2f2f7;
+  padding-bottom: env(safe-area-inset-bottom, 20px);
+}
+
+/* ── Header ──────────────────────────────────────────── */
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px;
+  padding-top: calc(env(safe-area-inset-top, 12px) + 12px);
+  background: #fff;
+  border-bottom: 0.5px solid #d1d1d6;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-logo {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+}
+
+.header-title {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.nav-header {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  padding-top: calc(env(safe-area-inset-top, 12px) + 12px);
+  background: #fff;
+  border-bottom: 0.5px solid #d1d1d6;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background: none;
+  border: none;
+  font-size: 17px;
+  color: #000;
+  cursor: pointer;
+  padding: 4px 0;
+  font-weight: 400;
+}
+
+.back-btn svg {
+  width: 20px;
+  height: 20px;
+}
+
+.nav-title {
+  flex: 1;
+  text-align: center;
+  font-size: 17px;
+  font-weight: 600;
+  margin-right: 60px;
+}
+
+.nav-right {
+  margin-left: auto;
+}
+
+.nav-action-btn {
+  background: none;
+  border: none;
+  font-size: 17px;
+  color: #000;
+  cursor: pointer;
+  padding: 4px 8px;
+  font-weight: 500;
+}
+
+/* ── Student List ────────────────────────────────────── */
+
+.student-list {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: #8e8e93;
+}
+
+.empty-state-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.4;
+}
+
+.empty-state p {
+  font-size: 15px;
+  line-height: 1.4;
+}
+
+/* ── Student Card ────────────────────────────────────── */
+
+.student-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  transition: transform 0.1s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.student-card:active {
+  transform: scale(0.98);
+}
+
+.student-card-left {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.student-name {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+.student-badge {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 2px 8px;
+  border-radius: 100px;
+  background: #000;
+  color: #fff;
+  width: fit-content;
+}
+
+.student-badge.prepay {
+  background: #f2f2f7;
+  color: #000;
+  border: 1px solid #d1d1d6;
+}
+
+.student-card-right {
+  text-align: right;
+}
+
+.student-metric {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.student-metric-label {
+  font-size: 11px;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+}
+
+.chevron {
+  color: #c7c7cc;
+  margin-left: 8px;
+}
+
+/* ── FAB (Floating Action Button) ────────────────────── */
+
+.fab {
+  position: fixed;
+  bottom: calc(env(safe-area-inset-bottom, 20px) + 24px);
+  right: 24px;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: #000;
+  color: #fff;
+  border: none;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  transition: transform 0.15s;
+  z-index: 50;
+}
+
+.fab:active {
+  transform: scale(0.9);
+}
+
+/* ── Student Detail ──────────────────────────────────── */
+
+.detail-content {
+  padding: 16px 20px;
+}
+
+.detail-summary {
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.detail-name {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
+  letter-spacing: -0.4px;
+}
+
+.detail-type-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.detail-rate {
+  font-size: 13px;
+  color: #8e8e93;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.stat-box {
+  text-align: center;
+  padding: 12px 8px;
+  background: #f2f2f7;
+  border-radius: 10px;
+}
+
+.stat-value {
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.stat-label {
+  font-size: 11px;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 2px;
+}
+
+.stat-box.full-width {
+  grid-column: 1 / -1;
+}
+
+/* ── Action Buttons ──────────────────────────────────── */
+
+.action-buttons {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.action-btn {
+  background: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 14px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: transform 0.1s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.action-btn:active {
+  transform: scale(0.96);
+}
+
+.action-btn.primary {
+  background: #000;
+  color: #fff;
+  grid-column: 1 / -1;
+}
+
+.action-btn.danger {
+  color: #ff3b30;
+}
+
+/* ── Bottom Sheet ────────────────────────────────────── */
+
+.sheet-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+
+.sheet {
+  background: #fff;
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  max-width: 428px;
+  padding: 20px;
+  padding-bottom: calc(env(safe-area-inset-bottom, 20px) + 20px);
+  animation: slideUp 0.25s ease;
+}
+
+.sheet-handle {
+  width: 36px;
+  height: 4px;
+  background: #d1d1d6;
+  border-radius: 2px;
+  margin: 0 auto 16px;
+}
+
+.sheet-title {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+/* ── Forms ───────────────────────────────────────────── */
+
+.form-group {
+  margin-bottom: 16px;
+}
+
+.form-label {
+  display: block;
+  font-size: 13px;
+  font-weight: 600;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.form-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #d1d1d6;
+  border-radius: 10px;
+  font-size: 17px;
+  background: #fff;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.form-input:focus {
+  border-color: #000;
+}
+
+.form-input::placeholder {
+  color: #c7c7cc;
+}
+
+.type-selector {
+  display: flex;
+  gap: 8px;
+}
+
+.type-option {
+  flex: 1;
+  padding: 12px;
+  border: 2px solid #d1d1d6;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s;
+}
+
+.type-option.selected {
+  border-color: #000;
+  background: #000;
+  color: #fff;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: 16px;
+  background: #000;
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.1s;
+}
+
+.submit-btn:active {
+  transform: scale(0.98);
+}
+
+.submit-btn:disabled {
+  opacity: 0.3;
+}
+
+.cancel-btn {
+  width: 100%;
+  padding: 14px;
+  background: #f2f2f7;
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 8px;
+}
+
+/* ── History Log ─────────────────────────────────────── */
+
+.history-section {
+  margin-top: 8px;
+}
+
+.history-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #8e8e93;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 10px;
+}
+
+.history-list {
+  background: #fff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.history-item {
+  padding: 12px 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 0.5px solid #f2f2f7;
+}
+
+.history-item:last-child {
+  border-bottom: none;
+}
+
+.history-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  background: #f2f2f7;
+}
+
+.history-icon.attendance {
+  background: #000;
+  color: #fff;
+}
+
+.history-icon.payment {
+  background: #34c759;
+  color: #fff;
+}
+
+.history-icon.offset {
+  background: #ff9500;
+  color: #fff;
+}
+
+.history-icon.settlement {
+  background: #007aff;
+  color: #fff;
+}
+
+.history-icon.package-purchase {
+  background: #5856d6;
+  color: #fff;
+}
+
+.history-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.history-label {
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.history-note {
+  font-size: 13px;
+  color: #8e8e93;
+  margin-top: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.history-meta {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.history-amount {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.history-date {
+  font-size: 11px;
+  color: #8e8e93;
+  margin-top: 1px;
+}
+
+.history-empty {
+  padding: 32px 16px;
+  text-align: center;
+  color: #8e8e93;
+  font-size: 15px;
+}
+
+/* ── Add/Edit Form Page ──────────────────────────────── */
+
+.form-page {
+  padding: 16px 20px;
+}
+
+.delete-zone {
+  margin-top: 32px;
+  text-align: center;
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: #ff3b30;
+  font-size: 17px;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 12px;
+}
+
+/* ── Confirm Dialog ──────────────────────────────────── */
+
+.confirm-text {
+  font-size: 15px;
+  color: #3c3c43;
+  text-align: center;
+  line-height: 1.4;
+  margin-bottom: 20px;
+}
+
+.confirm-highlight {
+  font-size: 28px;
+  font-weight: 700;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* ── Utilities ───────────────────────────────────────── */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  border: 0;
+}
