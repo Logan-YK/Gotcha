@@ -7,9 +7,11 @@ import PaymentAction from './PaymentAction'
 import OffsetAction from './OffsetAction'
 import SettleAction from './SettleAction'
 import NewPackageAction from './NewPackageAction'
+import EditRecordSheet from './EditRecordSheet'
 
 export default function StudentDetail({ studentId, onBack, onEdit, onDelete, onRefresh }) {
   const [sheet, setSheet] = useState(null)
+  const [editingRecord, setEditingRecord] = useState(null)
   const [, setTick] = useState(0)
   const refresh = useCallback(() => {
     setTick(t => t + 1)
@@ -23,7 +25,12 @@ export default function StudentDetail({ studentId, onBack, onEdit, onDelete, onR
 
   const handleDone = () => {
     setSheet(null)
+    setEditingRecord(null)
     refresh()
+  }
+
+  const handleEditRecord = (record) => {
+    setEditingRecord(record)
   }
 
   const renderStats = () => {
@@ -39,16 +46,16 @@ export default function StudentDetail({ studentId, onBack, onEdit, onDelete, onR
             <div className="stat-label">Classes</div>
           </div>
           <div className="stat-box">
-            <div className="stat-value">${student.perClassRate}</div>
-            <div className="stat-label">Per Class</div>
-          </div>
-          <div className="stat-box">
             <div className="stat-value">${owed}</div>
             <div className="stat-label">Owed</div>
           </div>
           <div className="stat-box">
             <div className="stat-value">${paid}</div>
             <div className="stat-label">Paid / Offset</div>
+          </div>
+          <div className="stat-box">
+            <div className="stat-value">${student.perClassRate || '--'}</div>
+            <div className="stat-label">Default Rate</div>
           </div>
         </div>
       )
@@ -98,8 +105,8 @@ export default function StudentDetail({ studentId, onBack, onEdit, onDelete, onR
             <span className={`student-badge ${isPerClass ? '' : 'prepay'}`}>
               {isPerClass ? 'Per Class' : 'Pre-pay'}
             </span>
-            {isPerClass && (
-              <span className="detail-rate">${student.perClassRate}/class</span>
+            {isPerClass && student.perClassRate != null && (
+              <span className="detail-rate">Default: ${student.perClassRate}/class</span>
             )}
           </div>
           {renderStats()}
@@ -134,7 +141,7 @@ export default function StudentDetail({ studentId, onBack, onEdit, onDelete, onR
           )}
         </div>
 
-        <HistoryLog studentId={studentId} />
+        <HistoryLog studentId={studentId} onEditRecord={handleEditRecord} />
 
         <div className="delete-zone">
           <button className="delete-btn" onClick={() => {
@@ -161,6 +168,14 @@ export default function StudentDetail({ studentId, onBack, onEdit, onDelete, onR
       )}
       {sheet === 'package' && (
         <NewPackageAction student={student} onDone={handleDone} onClose={() => setSheet(null)} />
+      )}
+      {editingRecord && (
+        <EditRecordSheet
+          record={editingRecord}
+          student={student}
+          onDone={handleDone}
+          onClose={() => setEditingRecord(null)}
+        />
       )}
     </>
   )

@@ -69,12 +69,17 @@ export function getAttendance(studentId) {
     .sort((a, b) => b.date - a.date)
 }
 
-export function signIn(studentId) {
+export function getAllAttendance() {
+  return load(KEYS.attendance)
+}
+
+export function signIn(studentId, date, price) {
   const records = load(KEYS.attendance)
   const record = {
     id: uid(),
     studentId,
-    date: Date.now(),
+    date: date || Date.now(),
+    price: price != null ? Number(price) : null,
   }
   records.push(record)
   save(KEYS.attendance, records)
@@ -83,11 +88,38 @@ export function signIn(studentId) {
   if (student?.type === 'pre-pay') {
     const pkg = getActivePackage(studentId)
     if (pkg && pkg.remainingClasses > 0) {
-      updatePackage(pkg.id, { remainingClasses: pkg.remainingClasses - 1 })
+      _updatePackage(pkg.id, { remainingClasses: pkg.remainingClasses - 1 })
     }
   }
 
   return record
+}
+
+export function updateAttendance(id, updates) {
+  const records = load(KEYS.attendance)
+  const idx = records.findIndex(r => r.id === id)
+  if (idx === -1) return null
+  if (updates.date !== undefined) records[idx].date = updates.date
+  if (updates.price !== undefined) records[idx].price = updates.price
+  save(KEYS.attendance, records)
+  return records[idx]
+}
+
+export function deleteAttendance(id) {
+  const records = load(KEYS.attendance)
+  const record = records.find(r => r.id === id)
+  if (!record) return
+
+  save(KEYS.attendance, records.filter(r => r.id !== id))
+
+  // If pre-pay student, give back the class to active package
+  const student = getStudent(record.studentId)
+  if (student?.type === 'pre-pay') {
+    const pkg = getActivePackage(record.studentId)
+    if (pkg) {
+      _updatePackage(pkg.id, { remainingClasses: pkg.remainingClasses + 1 })
+    }
+  }
 }
 
 // ── Payments ──────────────────────────────────────────────
@@ -145,6 +177,21 @@ export function settleBalance(studentId) {
   return record
 }
 
+export function updatePaymentRecord(id, updates) {
+  const records = load(KEYS.payments)
+  const idx = records.findIndex(r => r.id === id)
+  if (idx === -1) return null
+  if (updates.amount !== undefined) records[idx].amount = Number(updates.amount)
+  if (updates.date !== undefined) records[idx].date = updates.date
+  if (updates.note !== undefined) records[idx].note = updates.note
+  save(KEYS.payments, records)
+  return records[idx]
+}
+
+export function deletePaymentRecord(id) {
+  save(KEYS.payments, load(KEYS.payments).filter(r => r.id !== id))
+}
+
 // ── Packages ──────────────────────────────────────────────
 
 export function getPackages(studentId) {
@@ -159,7 +206,6 @@ export function getActivePackage(studentId) {
 
 export function createPackage(studentId, totalClasses, price) {
   const packages = load(KEYS.packages)
-  // deactivate old packages
   packages.forEach(p => {
     if (p.studentId === studentId) p.active = false
   })
@@ -175,7 +221,6 @@ export function createPackage(studentId, totalClasses, price) {
   packages.push(pkg)
   save(KEYS.packages, packages)
 
-  // record as package-purchase payment
   const payments = load(KEYS.payments)
   payments.push({
     id: uid(),
@@ -190,12 +235,32 @@ export function createPackage(studentId, totalClasses, price) {
   return pkg
 }
 
-function updatePackage(id, updates) {
+function _updatePackage(id, updates) {
   const packages = load(KEYS.packages)
   const idx = packages.findIndex(p => p.id === id)
   if (idx === -1) return
   packages[idx] = { ...packages[idx], ...updates }
   save(KEYS.packages, packages)
+}
+
+export function updatePackageRecord(id, updates) {
+  const packages = load(KEYS.packages)
+  const idx = packages.findIndex(p => p.id === id)
+  if (idx === -1) return null
+  const old = packages[idx]
+  if (updates.totalClasses !== undefined) {
+    const newTotal = Number(updates.totalClasses)
+    const diff = newTotal - old.totalClasses
+    packages[idx].totalClasses = newTotal
+    packages[idx].remainingClasses = Math.max(0, old.remainingClasses + diff)
+  }
+  if (updates.price !== undefined) packages[idx].price = Number(updates.price)
+  save(KEYS.packages, packages)
+  return packages[idx]
+}
+
+export function deletePackageRecord(id) {
+  save(KEYS.packages, load(KEYS.packages).filter(p => p.id !== id))
 }
 
 // ── Computed balances ─────────────────────────────────────
@@ -216,14 +281,15 @@ export function getOwedBalance(studentId) {
   const lastSettlement = payments.find(p => p.type === 'settlement')
   const since = lastSettlement ? lastSettlement.date : 0
 
-  const classCount = getAttendance(studentId).filter(r => r.date > since).length
-  const totalOwed = classCount * (student.perClassRate || 0)
+  const totalClassCost = getAttendance(studentId)
+    .filter(r => r.date > since)
+    .reduce((sum, r) => sum + (r.price || 0), 0)
 
   const totalPaid = payments
     .filter(p => p.date > since && (p.type === 'payment' || p.type === 'offset'))
     .reduce((sum, p) => sum + p.amount, 0)
 
-  return Math.max(0, totalOwed - totalPaid)
+  return Math.max(0, totalClassCost - totalPaid)
 }
 
 export function getTotalPaidSinceSettlement(studentId) {
@@ -234,6 +300,38 @@ export function getTotalPaidSinceSettlement(studentId) {
   return payments
     .filter(p => p.date > since && (p.type === 'payment' || p.type === 'offset'))
     .reduce((sum, p) => sum + p.amount, 0)
+}
+
+// ── Dashboard stats ───────────────────────────────────────
+
+export function getDashboardStats() {
+  const students = getStudents()
+  const allAttendance = getAllAttendance()
+
+  let totalOwed = 0
+  let totalPrePayRemaining = 0
+
+  students.forEach(s => {
+    if (s.type === 'per-class') {
+      totalOwed += getOwedBalance(s.id)
+    } else {
+      const pkg = getActivePackage(s.id)
+      if (pkg) totalPrePayRemaining += pkg.remainingClasses
+    }
+  })
+
+  const now = new Date()
+  const dayOfWeek = now.getDay()
+  const mondayOffset = dayOfWeek === 0 ? 6 : dayOfWeek - 1
+  const weekStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() - mondayOffset)
+  weekStart.setHours(0, 0, 0, 0)
+  const monthStart = new Date(now.getFullYear(), now.getMonth(), 1)
+  monthStart.setHours(0, 0, 0, 0)
+
+  const classesThisWeek = allAttendance.filter(r => r.date >= weekStart.getTime()).length
+  const classesThisMonth = allAttendance.filter(r => r.date >= monthStart.getTime()).length
+
+  return { totalOwed, totalPrePayRemaining, classesThisWeek, classesThisMonth }
 }
 
 // ── History (unified timeline) ────────────────────────────

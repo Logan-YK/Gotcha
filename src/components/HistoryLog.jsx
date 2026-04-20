@@ -16,7 +16,7 @@ const EVENT_CONFIG = {
   'package-purchase': { icon: '\u25A0', label: 'Package purchased', className: 'package-purchase' },
 }
 
-export default function HistoryLog({ studentId }) {
+export default function HistoryLog({ studentId, onEditRecord }) {
   const history = store.getHistory(studentId)
 
   if (history.length === 0) {
@@ -36,16 +36,26 @@ export default function HistoryLog({ studentId }) {
       <div className="history-list">
         {history.map(item => {
           const config = EVENT_CONFIG[item.eventType] || EVENT_CONFIG.attendance
-          const showAmount = item.eventType !== 'attendance' && item.amount != null
+          const isAttendance = item.eventType === 'attendance'
+          const showAmount = !isAttendance && item.amount != null
 
           return (
-            <div key={item.id} className="history-item">
+            <div
+              key={item.id}
+              className="history-item history-item-tappable"
+              onClick={() => onEditRecord && onEditRecord(item)}
+            >
               <div className={`history-icon ${config.className}`}>
                 {config.icon}
               </div>
               <div className="history-info">
                 <div className="history-label">{config.label}</div>
-                {item.note && <div className="history-note">{item.note}</div>}
+                {isAttendance && item.price != null && (
+                  <div className="history-note">${item.price}</div>
+                )}
+                {!isAttendance && item.note && (
+                  <div className="history-note">{item.note}</div>
+                )}
               </div>
               <div className="history-meta">
                 {showAmount && (
@@ -53,6 +63,11 @@ export default function HistoryLog({ studentId }) {
                 )}
                 <div className="history-date">{formatDate(item.date)}</div>
               </div>
+              <span className="history-chevron">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="9 6 15 12 9 18" />
+                </svg>
+              </span>
             </div>
           )
         })}

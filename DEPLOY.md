@@ -24,7 +24,7 @@ git init
 git add .
 git commit -m "Initial commit - Gotcha PWA"
 git branch -M main
-git remote add origin https://github.com/YOUR_USERNAME/Gotcha.git
+git remote add origin https://github.com/YOUR_USERNAME/Gotcha.git   git remote add origin https://github.com/Logan-YK/Gotcha.git
 git push -u origin main
 ```
 
@@ -65,15 +65,34 @@ https://YOUR_USERNAME.github.io/Gotcha/
 4. The app will appear on your home screen with the dumbbell icon
 5. It will open full-screen like a native app!
 
-## Updating the App
+## Updating the App After Code Changes
 
-Whenever you make changes, just run:
+Whenever the app code has been updated (e.g. new features, bug fixes), follow these steps to push the update live:
+
+### Step 1: Commit your changes to Git
+
+Open a terminal in the `d:\Desktop\Gotcha` folder:
+
+```bash
+git add .
+git commit -m "Brief description of what changed"
+git push origin main
+```
+
+### Step 2: Deploy to GitHub Pages
 
 ```bash
 npm run deploy
 ```
 
-The update will go live in 1-2 minutes.
+### Step 3: Refresh on your iPhone
+
+The update will go live in 1-2 minutes. On your iPhone:
+1. Open the Gotcha app from your home screen
+2. If it still shows the old version, close the app completely (swipe up from the app switcher) and reopen it
+3. The service worker will auto-update in the background
+
+That's it -- two commands (`git push` + `npm run deploy`) and your app is updated.
 
 ## Important Note
 

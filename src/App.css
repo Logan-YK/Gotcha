@@ -508,13 +508,29 @@ input, button, select, textarea {
 .history-item {
   padding: 12px 16px;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   gap: 12px;
   border-bottom: 0.5px solid #f2f2f7;
 }
 
 .history-item:last-child {
   border-bottom: none;
+}
+
+.history-item-tappable {
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.history-item-tappable:active {
+  background-color: #f2f2f7;
+}
+
+.history-chevron {
+  color: #c7c7cc;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
 }
 
 .history-icon {
@@ -645,4 +661,35 @@ input, button, select, textarea {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+/* ── Dashboard ───────────────────────────────────────── */
+
+.dashboard-card {
+  background: #fff;
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+/* ── Warning Banner ──────────────────────────────────── */
+
+.warning-banner {
+  background: #fff3cd;
+  border: 1px solid #ffcc02;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 13px;
+  color: #664d03;
+  line-height: 1.4;
+  margin-bottom: 16px;
+  text-align: center;
+}
+
+/* ── Date Input ──────────────────────────────────────── */
+
+input[type="date"].form-input {
+  -webkit-appearance: none;
+  appearance: none;
+  min-height: 48px;
 }

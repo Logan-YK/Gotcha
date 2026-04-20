@@ -1,9 +1,11 @@
 import StudentCard from './StudentCard'
+import Dashboard from './Dashboard'
 
 export default function StudentList({ students, onSelect, onAdd }) {
   return (
     <>
       <div className="student-list">
+        <Dashboard />
         {students.length === 0 ? (
           <div className="empty-state">
             <div className="empty-state-icon">
